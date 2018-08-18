@@ -27,8 +27,6 @@ class Game {
         this.aliens.forEach(function(alien){
             alien.update()
         })
-        
-
     }
 }
 context.clearRect(0, 0, 500, 500)
@@ -68,7 +66,7 @@ class Player {
 class Alien {
     constructor() {
         this.alienStart = {
-            x: screenSize.x / 2 - 5,
+            x: Math.floor(Math.random()*500),
             y: 20
         }
         this.alien = {
@@ -82,6 +80,9 @@ class Alien {
     }
     update() {
         this.alienStart.y += 1
+    }
+    alienStart(){
+
     }
 }
 
