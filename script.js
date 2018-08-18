@@ -23,7 +23,7 @@ class Game {
     constructor() {
         this.player = new Player(this)
         this.aliens = [new Alien(), new Alien(), new Alien(), new Alien(), new Alien(), new Alien(), new Alien(), new Alien()] 
-        this.bullets = [new Bullet(), new Bullet()]
+        this.bullets = []
         this.ticks()
     }
     draw() {
@@ -35,21 +35,43 @@ class Game {
             alien.draw()
         })
         this.player.draw()
+        if(this.gameOver === true){
+            console.log('checking to see if game is over')
+            this.context.textAlign = 'center'
+            this.context.font = '48px Helvetica'
+            this.context.fillStyle = 'black'
+            this.context.fillText('game over', this.screenSize.x / 2, this.screenSize.y / 2)
+        }
     }
     ticks() {
         this.update()
         this.draw()
         requestAnimationFrame(() => this.ticks())
     }
+    alienHitsBottom(){
+        let alienAtBottom = this.aliens.alienStart.y
+        console.log('alienhitsbottom')
+        if (alienAtBottom >= 100){
+            return true
+        }
+    }
+    checkGameOver(){
+        if(this.alienHitsBottom() === true){
+            this.gameOver = true
+            console.log("checkGameOver")
+        }
+    }
     update() {
         this.player.update()
         this.aliens.forEach(function(alien){
+            console.log('updating alien in game class')
             alien.update()
         })
         this.bullets.forEach(function(bullet){
             bullet.update()
         })
     }
+
 }
 context.clearRect(0, 0, 500, 500)
 
@@ -81,8 +103,7 @@ class Player {
             if (this.center.x >= 480) this.center.x = 480
         }
         if (this.keyboarder.isDown(Keyboarder.KEYS.S)) {
-            console.log('bullet space bar')
-            this.game.bullets.push(new Bullet()) 
+            this.game.bullets.push(new Bullet(this.center.x)) 
         }
     }   
 }
@@ -96,7 +117,6 @@ class Alien {
             x: 15,
             y: 15
         }
-       
     }
     draw() {
         context.fillStyle = colors.aliens
@@ -104,28 +124,29 @@ class Alien {
     }
     update() {
         this.alienStart.y += 1
-    }
-    alienStart(){
-
+        if(this.alienStart.y >= 200){
+            console.log("updating in alien class")
+            this.alienHitsBottom()
+        }
     }
 }
 class Bullet {
-    constructor() {
+    constructor(playerStartingX) {
         this.keyboarder = new Keyboarder()
         this.bulletStart = {
-            x: screenSize.x / 2 - 2.5,
+            x: playerStartingX,
             y: 445
         }
         this.bulletSize = {
             x: 5,
             y: 5
         }
+        this.game = game
     }
     draw() {
         context.fillStyle = colors.bullets
-        context.fillRect(this.bulletStart.x, this.bulletStart.y, this.bulletSize.x, this.bulletSize.y)
+        context.fillRect(this.bulletStart.x, this.bulletStart.y, this.bulletSize.x, this.bulletSize.y )
     }
-
     update() {   
         this.bulletStart.y -= 2
     }
@@ -133,6 +154,4 @@ class Bullet {
 
 
 
-
-    const alien = new Alien()
-    const game = new Game()
+const game = new Game()
