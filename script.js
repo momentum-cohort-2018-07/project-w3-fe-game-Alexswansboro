@@ -1,5 +1,6 @@
 const canvas = document.getElementById('screen')
 const context = canvas.getContext('2d')
+context.clearRect(0, 0, 500, 500)
 const screenSize = {
     x: canvas.width,
     y: canvas.height
@@ -21,10 +22,12 @@ function getRandomColor() {
   }
 class Game {
     constructor() {
+        this.gameOver = false
         this.player = new Player(this)
-        this.aliens = [new Alien(), new Alien(), new Alien(), new Alien(), new Alien(), new Alien(), new Alien(), new Alien()] 
+        this.aliens = [new Alien(this), new Alien(this), new Alien(this), new Alien(this), new Alien(this), new Alien(this), new Alien(this), new Alien(this)] 
         this.bullets = []
         this.ticks()
+        
     }
     draw() {
         context.clearRect(0, 0, 500, 500)
@@ -35,30 +38,18 @@ class Game {
             alien.draw()
         })
         this.player.draw()
-        if(this.gameOver === true){
-            console.log('checking to see if game is over')
-            this.context.textAlign = 'center'
-            this.context.font = '48px Helvetica'
-            this.context.fillStyle = 'black'
-            this.context.fillText('game over', this.screenSize.x / 2, this.screenSize.y / 2)
-        }
     }
     ticks() {
-        this.update()
-        this.draw()
-        requestAnimationFrame(() => this.ticks())
-    }
-    alienHitsBottom(){
-        let alienAtBottom = this.aliens.alienStart.y
-        console.log('alienhitsbottom')
-        if (alienAtBottom >= 100){
-            return true
-        }
-    }
-    checkGameOver(){
-        if(this.alienHitsBottom() === true){
-            this.gameOver = true
-            console.log("checkGameOver")
+        if(this.gameOver){
+            console.log('checking to see if game is over')
+            context.textAlign = 'center'
+            context.font = '48px Helvetica'
+            context.fillStyle = 'black'
+            context.fillText('game over', screenSize.x / 2, screenSize.y / 2)
+        }else{
+            this.update()
+            this.draw()
+            requestAnimationFrame(() => this.ticks())
         }
     }
     update() {
@@ -71,9 +62,13 @@ class Game {
             bullet.update()
         })
     }
-
+    stop(){
+        this.context.textAlign = 'center'
+        this.context.font = '48px Helvetica'
+        this.context.fillStyle = 'black'
+        this.context.fillText('game over', this.screenSize.x / 2, this.screenSize.y / 2)
+    }
 }
-context.clearRect(0, 0, 500, 500)
 
 class Player {
     constructor(game) {
@@ -108,7 +103,7 @@ class Player {
     }   
 }
 class Alien {
-    constructor() {
+    constructor(game) {
         this.alienStart = {
             x: Math.floor(Math.random()*500),
             y: 20
@@ -117,6 +112,7 @@ class Alien {
             x: 15,
             y: 15
         }
+        this.game = game
     }
     draw() {
         context.fillStyle = colors.aliens
@@ -124,15 +120,13 @@ class Alien {
     }
     update() {
         this.alienStart.y += 1
-        if(this.alienStart.y >= 200){
-            console.log("updating in alien class")
-            this.alienHitsBottom()
-        }
-    }
+        if(this.alienStart.y >= 100){
+            this.game.gameOver = true     
+       }
+    } 
 }
 class Bullet {
     constructor(playerStartingX) {
-        this.keyboarder = new Keyboarder()
         this.bulletStart = {
             x: playerStartingX,
             y: 445
@@ -151,7 +145,5 @@ class Bullet {
         this.bulletStart.y -= 2
     }
 }
-
-
 
 const game = new Game()

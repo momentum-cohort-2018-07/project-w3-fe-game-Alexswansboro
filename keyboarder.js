@@ -2,9 +2,9 @@ class Keyboarder {
   constructor () {
     this.keyState = {}
 
-    window.addEventListener('keydown', function (e) {
+    window.addEventListener('keydown',  (e) => {
       this.keyState[e.keyCode] = true
-    }.bind(this))
+    }) 
 
     window.addEventListener('keyup', function (e) {
       this.keyState[e.keyCode] = false
