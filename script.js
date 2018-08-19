@@ -54,9 +54,14 @@ class Game {
     }
     update() {
         this.player.update()
-        this.aliens.forEach(function(alien){
-            console.log('updating alien in game class')
+        this.aliens.forEach((alien) => {
             alien.update()
+            if(alien.alienStart.y + 20 === this.player.center.y 
+                || alien.alienStart.y + 20 === this.player.center.y + 20 
+                || alien.alienStart.x + 20 === this.player.center.x 
+                || alien.alienStart.x === this.player.center.x + 20){
+                    this.gameOver = true
+                }
         })
         this.bullets.forEach(function(bullet){
             bullet.update()
@@ -100,6 +105,7 @@ class Player {
         if (this.keyboarder.isDown(Keyboarder.KEYS.S)) {
             this.game.bullets.push(new Bullet(this.center.x)) 
         }
+        
     }   
 }
 class Alien {
@@ -109,18 +115,19 @@ class Alien {
             y: 20
         }
         this.alien = {
-            x: 15,
-            y: 15
+            x: 20,
+            y: 20
         }
         this.game = game
+        // context.fillStyle = getRandomColor()
     }
     draw() {
-        context.fillStyle = colors.aliens
+        // context.fillStyle = getRandomColor()
         context.fillRect(this.alienStart.x, this.alienStart.y, this.alien.x, this.alien.y)
     }
     update() {
         this.alienStart.y += 1
-        if(this.alienStart.y >= 100){
+        if(this.alienStart.y >= 500){
             this.game.gameOver = true     
        }
     } 
