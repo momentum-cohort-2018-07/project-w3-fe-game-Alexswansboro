@@ -20,6 +20,15 @@ function getRandomColor() {
     }
     return color;
   }
+  function colliding (b1, b2) {
+    return !(
+      b1 === b2 ||
+          b1.center.x + b1.size.x / 2 < b2.center.x - b2.size.x / 2 ||
+          b1.center.y + b1.size.y / 2 < b2.center.y - b2.size.y / 2 ||
+          b1.center.x - b1.size.x / 2 > b2.center.x + b2.size.x / 2 ||
+          b1.center.y - b1.size.y / 2 > b2.center.y + b2.size.y / 2
+    )
+  }
 class Game {
     constructor() {
         this.gameOver = false
@@ -27,6 +36,7 @@ class Game {
         this.aliens = [new Alien(this), new Alien(this), new Alien(this), new Alien(this), new Alien(this), new Alien(this), new Alien(this), new Alien(this)] 
         this.bullets = []
         this.ticks()
+        // this.centerY = this.aliens.alien.center.y
         
     }
     draw() {
@@ -55,13 +65,7 @@ class Game {
     update() {
         this.player.update()
         this.aliens.forEach((alien) => {
-            alien.update()
-            if(alien.alienStart.y + 20 === this.player.center.y 
-                || alien.alienStart.y + 20 === this.player.center.y + 20 
-                || alien.alienStart.x + 20 === this.player.center.x 
-                || alien.alienStart.x === this.player.center.x + 20){
-                    this.gameOver = true
-                }
+            alien.update()   
         })
         this.bullets.forEach(function(bullet){
             bullet.update()
@@ -81,17 +85,16 @@ class Player {
             x: screenSize.x / 2 - 10,
             y: 450
         }
-        this.playerSize = {
+        this.size = {
             x: 20,
             y: 20
         }
         this.keyboarder = new Keyboarder()
         this.game = game
-
     }
     draw() {
         context.fillStyle = colors.player
-        context.fillRect(this.center.x, this.center.y, this.playerSize.x, this.playerSize.y)
+        context.fillRect(this.center.x, this.center.y, this.size.x, this.size.y)
     }
     update() {
         if (this.keyboarder.isDown(Keyboarder.KEYS.LEFT)) {
@@ -105,16 +108,20 @@ class Player {
         if (this.keyboarder.isDown(Keyboarder.KEYS.S)) {
             this.game.bullets.push(new Bullet(this.center.x)) 
         }
-        
+        this.game.aliens.forEach((alien) => {
+            if (colliding(this, alien)){
+                this.game.gameOver = true
+            }
+        })
     }   
 }
 class Alien {
     constructor(game) {
-        this.alienStart = {
+        this.center = {
             x: Math.floor(Math.random()*500),
             y: 20
         }
-        this.alien = {
+        this.size = {
             x: 20,
             y: 20
         }
@@ -122,23 +129,32 @@ class Alien {
         // context.fillStyle = getRandomColor()
     }
     draw() {
-        // context.fillStyle = getRandomColor()
-        context.fillRect(this.alienStart.x, this.alienStart.y, this.alien.x, this.alien.y)
+        context.fillStyle = getRandomColor()
+        context.fillRect(this.center.x, this.center.y, this.size.x, this.size.y)
     }
     update() {
-        this.alienStart.y += 1
-        if(this.alienStart.y >= 500){
+        this.center.y += 1
+        if(this.center.y >= 500){
             this.game.gameOver = true     
-       }
+        }
+        this.game.bullets.forEach((bullet) => {
+            bullet.forEach((game.aliens) => {
+                if (colliding(alien, bullet)){
+                    this.game.bullets.splice(i, 1)
+                } if (aliens.length === 0){
+                    this.game.gameOver = true
+                }
+            })
+        })
     } 
 }
 class Bullet {
     constructor(playerStartingX) {
-        this.bulletStart = {
+        this.center = {
             x: playerStartingX,
             y: 445
         }
-        this.bulletSize = {
+        this.size = {
             x: 5,
             y: 5
         }
@@ -146,10 +162,10 @@ class Bullet {
     }
     draw() {
         context.fillStyle = colors.bullets
-        context.fillRect(this.bulletStart.x, this.bulletStart.y, this.bulletSize.x, this.bulletSize.y )
+        context.fillRect(this.center.x, this.center.y, this.size.x, this.size.y )
     }
     update() {   
-        this.bulletStart.y -= 2
+        this.center.y -= 2
     }
 }
 
