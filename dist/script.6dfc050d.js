@@ -349,7 +349,7 @@ var Alien = function () {
     };
     this.game = game;
     this.color = (0, _randomcolor.getRandomColor)();
-    this.speed = Math.random();
+    this.speed = Math.random() * 1;
   }
 
   _createClass(Alien, [{
@@ -371,6 +371,9 @@ var Alien = function () {
         _this.game.aliens.forEach(function (alien, alienIndex) {
           if ((0, _colliding.colliding)(alien, bullet)) {
             _this.game.aliens.splice(alienIndex, 1);
+          }
+          if (_this.game.aliens.length < 3) {
+            _this.game.aliens.push(new Alien());
           }
           if (_this.game.aliens.length === 0) {
             _this.game.winner = true;
@@ -659,7 +662,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '54975' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '55225' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

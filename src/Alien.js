@@ -13,7 +13,7 @@ class Alien {
     }
     this.game = game
     this.color = getRandomColor()
-    this.speed = Math.random() * 50
+    this.speed = Math.random() * 1
   }
   draw () {
     context.fillStyle = this.color
